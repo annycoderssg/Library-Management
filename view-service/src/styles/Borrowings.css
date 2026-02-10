@@ -1,0 +1,55 @@
+.borrowings {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Borrowings-specific styles */
+.overdue {
+  background: #fff3cd !important;
+}
+
+.overdue-date {
+  color: #991b1b;
+  font-weight: 600;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.status-borrowed {
+  background: #cfe2ff;
+  color: #084298;
+}
+
+.status-returned {
+  background: #d1e7dd;
+  color: #0f5132;
+}
+
+.status-overdue {
+  background: #f8d7da;
+  color: #842029;
+}
+
+/* Mobile Responsive */
+@media screen and (max-width: 768px) {
+  .status-badge {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 8px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .status-badge {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.7rem;
+  }
+}

@@ -1,0 +1,364 @@
+/* Common Component Styles - Shared across all components */
+
+/* Base component container styles - Used by Books, Members, Borrowings, Dashboard */
+.component-container {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Common section heading styles */
+.section-heading {
+    margin-bottom: 2rem;
+    color: #1f2937;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+/* ==================== COMMON BUTTONS ==================== */
+/* Note: btn-primary, btn-secondary, btn-edit, btn-delete are defined in App.css for global use */
+
+.btn-secondary {
+    padding: 0.5rem 1.5rem;
+    background-color: #6b7280;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: #4b5563;
+}
+
+.btn-secondary:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-return {
+    padding: 0.5rem 1rem;
+    background-color: #059669;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.btn-return:hover:not(:disabled) {
+    background-color: #047857;
+}
+
+.btn-return:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-borrow {
+    padding: 0.5rem 1rem;
+    background-color: #4a5568;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.btn-borrow:hover:not(:disabled) {
+    background-color: #374151;
+}
+
+.btn-borrow:disabled,
+.btn-borrow.disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+/* ==================== COMMON ICONS ==================== */
+.home-icon-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #4a5568;
+    font-size: 1.5rem;
+    transition: transform 0.2s, color 0.2s;
+    padding: 0.5rem;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+}
+
+.home-icon-link:hover {
+    transform: scale(1.1);
+    color: #374151;
+    background-color: #f3f4f6;
+}
+
+.home-icon {
+    display: inline-block;
+    font-size: 1.5rem;
+}
+
+/* ==================== COMMON LAYOUT ==================== */
+.user-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+/* ==================== COMMON MESSAGES ==================== */
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 0.75rem 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    border: 1px solid #c3e6cb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.success-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+/* ==================== COMMON STATUS BADGES ==================== */
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.status-badge.borrowed {
+    background-color: #6b7280;
+    color: white;
+}
+
+.status-badge.returned {
+    background-color: #059669;
+    color: white;
+}
+
+.status-badge.overdue {
+    background-color: #991b1b;
+    color: white;
+}
+
+.book-status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: white;
+    font-weight: 500;
+}
+
+.book-status-badge.borrowed {
+    background-color: #6b7280;
+}
+
+.book-status-badge.overdue {
+    background-color: #991b1b;
+}
+
+.book-status-available {
+    color: #059669;
+    font-weight: 500;
+}
+
+/* ==================== COMMON OVERDUE STYLES ==================== */
+.overdue-text {
+    color: #991b1b;
+    font-weight: 600;
+}
+
+.overdue-warning {
+    background-color: #fee2e2;
+    padding: 0.5rem;
+    border-radius: 5px;
+}
+
+.due-soon-warning {
+    background-color: #fef3c7;
+    padding: 0.5rem;
+    border-radius: 5px;
+}
+
+.overdue-row {
+    background-color: #fee2e2 !important;
+}
+
+.overdue-row td {
+    border-left: 3px solid #991b1b;
+}
+
+.unavailable {
+    color: #991b1b;
+    font-weight: 600;
+}
+
+/* ==================== COMMON EMPTY STATE ==================== */
+.empty-state-content {
+    text-align: center;
+    padding: 2rem;
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state-title {
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.empty-state-message {
+    margin-bottom: 1rem;
+    color: #666;
+}
+
+/* ==================== COMMON PENDING BOOKS ==================== */
+.pending-books-section {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: #fef3c7;
+    border-radius: 5px;
+    border: 1px solid #d97706;
+}
+
+.pending-books-section h3,
+.pending-books-title {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: #92400e;
+}
+
+.pending-books-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.pending-books-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    background-color: #fef3c7;
+    color: #92400e;
+    font-size: 0.9rem;
+}
+
+.pending-books-badge.overdue {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.pending-due-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: #fef3c7;
+    border-radius: 10px;
+    border: 2px solid #d97706;
+}
+
+.pending-due-title {
+    margin-top: 0;
+    color: #92400e;
+}
+
+.pending-due-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.pending-due-card {
+    padding: 1rem;
+    background-color: #fef3c7;
+    border-radius: 8px;
+    border: 2px solid #d97706;
+}
+
+.pending-due-card.overdue {
+    background-color: #fee2e2;
+    border-color: #991b1b;
+}
+
+.pending-due-card-title {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.pending-due-card-author {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.pending-due-card-status {
+    margin: 0.5rem 0;
+    font-weight: 600;
+    color: #92400e;
+    font-size: 0.875rem;
+}
+
+.pending-due-card-status.overdue {
+    color: #991b1b;
+}
+
+.pending-due-card-date {
+    margin: 0.25rem 0;
+    font-size: 0.85rem;
+}
+
+/* ==================== COMMON ACTION BUTTONS ==================== */
+.book-action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.return-button-container {
+    margin-top: 1rem;
+}
+
+/* Mobile Responsive - Common patterns */
+@media screen and (max-width: 768px) {
+    .component-container {
+        width: 100%;
+    }
+
+    .section-heading {
+        font-size: 1.4rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .section-heading {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+}

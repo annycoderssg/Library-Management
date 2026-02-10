@@ -1,0 +1,34 @@
+/* Books component specific styles */
+.books {
+  width: 100%;
+  max-width: 100%;
+}
+
+.books-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+.books-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.books-title {
+  margin: 0;
+  color: #333;
+  flex: 1;
+}
+
+/* Common styles moved to common.css */
+
+.borrow-modal-info {
+  margin-bottom: 1rem;
+}
+
+/* Additional Books-specific styles can be added here */

@@ -1,0 +1,203 @@
+/* Header specific styles - Common header styles are in App.css */
+
+.app-header {
+  background: #4a5568;
+  color: white;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.header-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.user-info {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.btn-header {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.625rem 1.25rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: background 0.2s ease;
+}
+
+.btn-header:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.btn-header.btn-primary {
+  background: white;
+  color: #4a5568;
+}
+
+.btn-header.btn-primary:hover {
+  background: #f5f5f5;
+}
+
+.app-header h1 {
+  font-size: 3.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  word-wrap: break-word;
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+.nav-tabs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.nav-tabs a,
+.nav-tabs button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 0.625rem 1.25rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.nav-tabs a:hover:not(:disabled),
+.nav-tabs button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.nav-tabs a:active:not(:disabled),
+.nav-tabs button:active:not(:disabled) {
+  transform: translateY(0);
+  transition: transform 0.05s ease;
+}
+
+.nav-tabs a.active,
+.nav-tabs button.active {
+  background: white;
+  color: #4a5568;
+  font-weight: 600;
+}
+
+.nav-tabs a:disabled,
+.nav-tabs button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Mobile Responsive */
+@media screen and (max-width: 768px) {
+  .app-header {
+    padding: 1rem;
+  }
+
+  .app-header h1 {
+    font-size: 2.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    text-align: center;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-tabs {
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .nav-tabs a,
+  .nav-tabs button {
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Small mobile devices (up to 480px) */
+@media screen and (max-width: 480px) {
+  .app-header {
+    padding: 0.75rem;
+  }
+
+  .app-header h1 {
+    font-size: 2.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-tabs {
+    gap: 0.25rem;
+    justify-content: center;
+  }
+
+  .nav-tabs a,
+  .nav-tabs button {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Landscape orientation for mobile */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  .app-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .app-header h1 {
+    font-size: 2.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-tabs {
+    justify-content: center;
+  }
+
+  .nav-tabs a,
+  .nav-tabs button {
+    padding: 0.4rem 1rem;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+
+  .nav-tabs a,
+  .nav-tabs button {
+    min-height: 44px;
+  }
+}
