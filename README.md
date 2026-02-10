@@ -242,18 +242,6 @@ curl 'http://localhost:8891/api/books?search=python&skip=0&limit=10'
 | `users` | User accounts for authentication |
 | `borrowings` | Book borrowing records |
 
-### Entity Relationships
-
-```
-┌─────────┐     ┌────────────┐     ┌─────────┐
-│  books  │────<│ borrowings │>────│ members │
-└─────────┘     └────────────┘     └────┬────┘
-                                        │
-                                   ┌────┴────┐
-                                   │  users  │
-                                   └─────────┘
-```
-
 ## Email Reminders
 
 The `email_reminder.py` script sends notifications for:
