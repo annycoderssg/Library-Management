@@ -26,7 +26,11 @@ const api = axios.create({
 
 // Books API
 export const booksAPI = {
-    getAll: (skip = 0, limit = ITEMS_PER_PAGE) => api.get('/books', { params: { skip, limit } }),
+    getAll: (skip = 0, limit = ITEMS_PER_PAGE, search = '') => {
+        const params = { skip, limit };
+        if (search) params.search = search;
+        return api.get('/books', { params });
+    },
     getById: (id) => api.get(`/books/${id}`),
     create: (data) => api.post('/books', data),
     update: (id, data) => api.put(`/books/${id}`, data),
@@ -35,7 +39,11 @@ export const booksAPI = {
 
 // Members API
 export const membersAPI = {
-    getAll: (skip = 0, limit = ITEMS_PER_PAGE) => api.get('/members', { params: { skip, limit } }),
+    getAll: (skip = 0, limit = ITEMS_PER_PAGE, search = '') => {
+        const params = { skip, limit };
+        if (search) params.search = search;
+        return api.get('/members', { params });
+    },
     getById: (id) => api.get(`/members/${id}`),
     create: (data) => api.post('/members', data),
     update: (id, data) => api.put(`/members/${id}`, data),

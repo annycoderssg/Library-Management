@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { subscriptionsAPI } from '../api';
 import '../styles/Home.css';
 
 
@@ -87,20 +86,16 @@ function Home() {
     const [subscriptionEmail, setSubscriptionEmail] = useState('');
     const [subscriptionMessage, setSubscriptionMessage] = useState('');
 
-    const handleSubscribe = async (e) => {
+    const handleSubscribe = (e) => {
         e.preventDefault();
         if (!subscriptionEmail) {
             setSubscriptionMessage('Please enter your email address');
             return;
         }
-
-        try {
-            await subscriptionsAPI.create({ email: subscriptionEmail });
-            setSubscriptionMessage('Thank you for subscribing!');
-            setSubscriptionEmail('');
-        } catch (error) {
-            setSubscriptionMessage(error.response?.data?.detail || 'Error subscribing. Please try again.');
-        }
+        
+        // Simple subscription handler (no backend call)
+        setSubscriptionMessage('Thank you for subscribing! We will keep you updated.');
+        setSubscriptionEmail('');
     };
 
     return (

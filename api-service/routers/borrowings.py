@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Path
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 from datetime import date
 from typing import List, Optional
 
@@ -16,11 +16,12 @@ def get_borrowings(
     skip: int = 0,
     limit: int = 10,
     status_filter: Optional[str] = None,
+    search: Optional[str] = None,
     member_id: Optional[int] = None,
     book_id: Optional[int] = None,
     db: Session = Depends(get_read_db)
 ):
-    """Get all borrowings with optional filters and pagination"""
+    """Get all borrowings with optional filters, search and pagination"""
     query = db.query(Borrowing).options(
         joinedload(Borrowing.book),
         joinedload(Borrowing.member)
@@ -39,6 +40,16 @@ def get_borrowings(
         query = query.filter(Borrowing.member_id == member_id)
     if book_id:
         query = query.filter(Borrowing.book_id == book_id)
+    
+    # Apply search filter (search by book title or member name)
+    if search:
+        search_pattern = f"%{search}%"
+        query = query.join(Book).join(Member).filter(
+            or_(
+                Book.title.ilike(search_pattern),
+                Member.name.ilike(search_pattern)
+            )
+        )
     
     # Get total count before pagination
     total = query.count()

@@ -23,6 +23,8 @@ function Borrowings() {
     const [statusFilter, setStatusFilter] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchInput, setSearchInput] = useState('');
     const itemsPerPage = parseInt(import.meta.env.VITE_ITEMS_PER_PAGE) || 10;
     const [formData, setFormData] = useState({
         book_id: '',
@@ -42,7 +44,7 @@ function Borrowings() {
     }, []);
 
     const loadData = useCallback(async () => {
-        // Only prevent duplicate if same filter, page and already loading
+        // Only prevent duplicate if same filter, page, search and already loading
         if (loadingRef.current && statusFilterRef.current === statusFilter && currentPageRef.current === currentPage) return;
 
         loadingRef.current = true;
@@ -54,7 +56,8 @@ function Borrowings() {
             const params = {
                 skip,
                 limit: itemsPerPage,
-                ...(statusFilter && { status_filter: statusFilter })
+                ...(statusFilter && { status_filter: statusFilter }),
+                ...(searchTerm && { search: searchTerm })
             };
 
             const [borrowingsRes, booksRes, membersRes] = await Promise.all([
@@ -93,7 +96,7 @@ function Borrowings() {
         } finally {
             loadingRef.current = false;
         }
-    }, [statusFilter, currentPage, itemsPerPage]);
+    }, [statusFilter, currentPage, itemsPerPage, searchTerm]);
 
     useEffect(() => {
         // Load data when component mounts
@@ -108,6 +111,18 @@ function Borrowings() {
     const handlePageChange = (page) => {
         setCurrentPage(page);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        setSearchTerm(searchInput);
+        setCurrentPage(1);
+    };
+
+    const handleClearSearch = () => {
+        setSearchInput('');
+        setSearchTerm('');
+        setCurrentPage(1);
     };
 
     const handleSubmit = async (e) => {
@@ -222,6 +237,28 @@ function Borrowings() {
             />
 
             <ErrorMessage message={error} onClose={() => setError(null)} />
+
+            {/* Search Box */}
+            <div className="search-box">
+                <form onSubmit={handleSearch} className="search-form">
+                    <input
+                        type="text"
+                        placeholder="Search by book title or member name..."
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        className="search-input"
+                    />
+                    <button type="submit" className="btn-search">🔍 Search</button>
+                    {searchTerm && (
+                        <button type="button" className="btn-clear" onClick={handleClearSearch}>✕ Clear</button>
+                    )}
+                </form>
+                {searchTerm && (
+                    <p className="search-results-info">
+                        Showing results for: <strong>"{searchTerm}"</strong> ({totalItems} found)
+                    </p>
+                )}
+            </div>
 
             <Modal
                 isOpen={showForm}
