@@ -41,6 +41,7 @@ function Books() {
         total_copies: 1,
         available_copies: 1,
     });
+    const [searchTerm, setSearchTerm] = useState('');
     const loadingRef = useRef(false);
     const mountedRef = useRef(true);
     const navigate = useNavigate();
@@ -301,15 +302,35 @@ function Books() {
     const user = getUser(); // Get user from localStorage
     const isAdmin = user && user.role === 'admin';
 
+    // Filter books based on search term
+    const filteredBooks = books.filter(book => {
+        if (!searchTerm) return true;
+        const search = searchTerm.toLowerCase();
+        return (
+            book.title?.toLowerCase().includes(search) ||
+            book.author?.toLowerCase().includes(search) ||
+            book.isbn?.toLowerCase().includes(search)
+        );
+    });
+
     return (
         <div className="books">
             {isAdmin ? (
                 <SectionHeader
                     title="Books Management"
                     actions={
-                        <button className="btn-primary" onClick={() => { setShowForm(true); setEditingBook(null); resetForm(); }}>
-                            + Add Book
-                        </button>
+                        <>
+                            <input
+                                type="text"
+                                placeholder="Search books..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="search-input"
+                            />
+                            <button className="btn-primary" onClick={() => { setShowForm(true); setEditingBook(null); resetForm(); }}>
+                                + Add Book
+                            </button>
+                        </>
                     }
                 />
             ) : (
@@ -321,6 +342,13 @@ function Books() {
                         <h2 className="books-title">Available Books</h2>
                     </div>
                     <div className="user-actions">
+                        <input
+                            type="text"
+                            placeholder="Search books..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="search-input"
+                        />
                         <button className="btn-secondary" onClick={() => navigate('/user/dashboard')}>
                             Dashboard
                         </button>
@@ -490,7 +518,7 @@ function Books() {
                         </tr>
                     </thead>
                     <tbody>
-                        {!books || books.length === 0 ? (
+                        {!filteredBooks || filteredBooks.length === 0 ? (
                             <tr>
                                 <td colSpan={isAdmin ? 8 : 7} className="empty-state">
                                     <div className="empty-state-content">
@@ -507,7 +535,7 @@ function Books() {
                                 </td>
                             </tr>
                         ) : (
-                            books.map((book) => {
+                            filteredBooks.map((book) => {
                                 if (!book || !book.id) return null;
 
                                 const isBorrowed = isBookBorrowedByUser(book.id);

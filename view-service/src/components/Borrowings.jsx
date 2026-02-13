@@ -20,6 +20,7 @@ function Borrowings() {
     const [error, setError] = useState(null);
     const [showForm, setShowForm] = useState(false);
     const [statusFilter, setStatusFilter] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
     const [formData, setFormData] = useState({
         book_id: '',
         member_id: '',
@@ -165,12 +166,29 @@ function Borrowings() {
         label: member.name
     }));
 
+    // Filter borrowings based on search term
+    const filteredBorrowings = borrowings.filter(borrowing => {
+        if (!searchTerm) return true;
+        const search = searchTerm.toLowerCase();
+        return (
+            borrowing.book?.title?.toLowerCase().includes(search) ||
+            borrowing.member?.name?.toLowerCase().includes(search)
+        );
+    });
+
     return (
         <div className="borrowings">
             <SectionHeader
                 title="Borrowings Management"
                 actions={
                     <>
+                        <input
+                            type="text"
+                            placeholder="Search borrowings..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="search-input"
+                        />
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
@@ -244,7 +262,7 @@ function Borrowings() {
                         </tr>
                     </thead>
                     <tbody>
-                        {borrowings.length === 0 ? (
+                        {filteredBorrowings.length === 0 ? (
                             <tr>
                                 <td colSpan="9" className="empty-state">
                                     <div style={{ textAlign: 'center', padding: '2rem' }}>
@@ -265,7 +283,7 @@ function Borrowings() {
                                 </td>
                             </tr>
                         ) : (
-                            borrowings.map((borrowing) => {
+                            filteredBorrowings.map((borrowing) => {
                                 const overdue = isOverdue(borrowing.due_date, borrowing.status);
                                 const isProcessing = returning === borrowing.id || deleting === borrowing.id;
                                 return (

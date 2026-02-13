@@ -30,6 +30,7 @@ function Members() {
         role: 'member',
         password: '',
     });
+    const [searchTerm, setSearchTerm] = useState('');
     const loadingRef = useRef(false);
     const mountedRef = useRef(true);
 
@@ -235,14 +236,34 @@ function Members() {
         resetForm();
     };
 
+    // Filter members based on search term
+    const filteredMembers = members.filter(member => {
+        if (!searchTerm) return true;
+        const search = searchTerm.toLowerCase();
+        return (
+            member.name?.toLowerCase().includes(search) ||
+            member.email?.toLowerCase().includes(search) ||
+            member.phone?.toLowerCase().includes(search)
+        );
+    });
+
     return (
         <div className="members">
             <SectionHeader
                 title="Members Management"
                 actions={
-                    <button className="btn-primary" onClick={() => { setShowForm(true); setEditingMember(null); resetForm(); }}>
-                        + Add Member
-                    </button>
+                    <>
+                        <input
+                            type="text"
+                            placeholder="Search members..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="search-input"
+                        />
+                        <button className="btn-primary" onClick={() => { setShowForm(true); setEditingMember(null); resetForm(); }}>
+                            + Add Member
+                        </button>
+                    </>
                 }
             />
 
@@ -351,7 +372,7 @@ function Members() {
                         </tr>
                     </thead>
                     <tbody>
-                        {members.length === 0 ? (
+                        {filteredMembers.length === 0 ? (
                             <tr>
                                 <td colSpan="7" className="empty-state">
                                     <div style={{ textAlign: 'center', padding: '2rem' }}>
@@ -368,7 +389,7 @@ function Members() {
                                 </td>
                             </tr>
                         ) : (
-                            members.map((member) => (
+                            filteredMembers.map((member) => (
                                 <tr key={member.id}>
                                     <td>{member.id}</td>
                                     <td>{member.name}</td>

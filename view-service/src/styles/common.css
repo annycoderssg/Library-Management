@@ -109,6 +109,27 @@
 .user-actions {
     display: flex;
     gap: 1rem;
+    align-items: center;
+}
+
+/* ==================== SEARCH INPUT ==================== */
+.search-input {
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    min-width: 200px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-input::placeholder {
+    color: #9ca3af;
 }
 
 /* ==================== COMMON MESSAGES ==================== */
