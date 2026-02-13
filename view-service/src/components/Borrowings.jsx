@@ -50,9 +50,10 @@ function Borrowings() {
                 membersAPI.getAll(),
             ]);
             if (mountedRef.current) {
-                setBorrowings(borrowingsRes.data);
-                setBooks(booksRes.data);
-                setMembers(membersRes.data);
+                // Handle paginated responses (API returns { items: [...], total: ... })
+                setBorrowings(Array.isArray(borrowingsRes.data) ? borrowingsRes.data : borrowingsRes.data.items || []);
+                setBooks(Array.isArray(booksRes.data) ? booksRes.data : booksRes.data.items || []);
+                setMembers(Array.isArray(membersRes.data) ? membersRes.data : membersRes.data.items || []);
                 setError(null);
             }
         } catch (err) {
