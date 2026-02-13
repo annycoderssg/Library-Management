@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Path
 from sqlalchemy.orm import Session
-from sqlalchemy import func, or_
-from typing import List, Optional
+from sqlalchemy import func
+from typing import List
 from pydantic import BaseModel
 import os
 from dotenv import load_dotenv
@@ -26,31 +26,12 @@ class PaginatedBooksResponse(BaseModel):
 
 
 @router.get("", response_model=PaginatedBooksResponse)
-def get_books(
-    skip: int = 0,
-    limit: int = None,
-    search: Optional[str] = None,
-    db: Session = Depends(get_read_db)
-):
-    """Get all books with pagination and optional search"""
+def get_books(skip: int = 0, limit: int = None, db: Session = Depends(get_read_db)):
+    """Get all books with pagination"""
     if limit is None:
         limit = DEFAULT_BOOKS_PER_PAGE
-    
-    query = db.query(Book)
-    
-    # Apply search filter
-    if search:
-        search_pattern = f"%{search}%"
-        query = query.filter(
-            or_(
-                Book.title.ilike(search_pattern),
-                Book.author.ilike(search_pattern),
-                Book.isbn.ilike(search_pattern)
-            )
-        )
-    
-    total = query.count()
-    books = query.order_by(Book.id.desc()).offset(skip).limit(limit).all()
+    total = db.query(func.count(Book.id)).scalar()
+    books = db.query(Book).offset(skip).limit(limit).all()
     return {
         "items": books,
         "total": total,

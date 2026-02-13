@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Path
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import and_, or_
+from sqlalchemy import and_
 from datetime import date
 from typing import List, Optional
 
@@ -14,14 +14,13 @@ router = APIRouter(prefix="/api/borrowings", tags=["Borrowings"])
 @router.get("")
 def get_borrowings(
     skip: int = 0,
-    limit: int = 10,
+    limit: int = 100,
     status_filter: Optional[str] = None,
-    search: Optional[str] = None,
     member_id: Optional[int] = None,
     book_id: Optional[int] = None,
     db: Session = Depends(get_read_db)
 ):
-    """Get all borrowings with optional filters, search and pagination"""
+    """Get all borrowings with optional filters"""
     query = db.query(Borrowing).options(
         joinedload(Borrowing.book),
         joinedload(Borrowing.member)
@@ -41,28 +40,8 @@ def get_borrowings(
     if book_id:
         query = query.filter(Borrowing.book_id == book_id)
     
-    # Apply search filter (search by book title or member name)
-    if search:
-        search_pattern = f"%{search}%"
-        query = query.join(Book).join(Member).filter(
-            or_(
-                Book.title.ilike(search_pattern),
-                Member.name.ilike(search_pattern)
-            )
-        )
-    
-    # Get total count before pagination
-    total = query.count()
-    
-    # Apply pagination and order by most recent first
-    borrowings = query.order_by(Borrowing.id.desc()).offset(skip).limit(limit).all()
-    
-    return {
-        "items": borrowings,
-        "total": total,
-        "skip": skip,
-        "limit": limit
-    }
+    borrowings = query.offset(skip).limit(limit).all()
+    return borrowings
 
 
 @router.get("/{borrowing_id}", response_model=BorrowingDetailResponse)

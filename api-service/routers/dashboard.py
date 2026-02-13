@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api", tags=["Dashboard"])
 
 @router.get("/dashboard", response_model=DashboardData)
 def get_dashboard_data(db: Session = Depends(get_read_db)):
-    """Get dashboard data including stats and new books"""
+    """Get dashboard data including stats, new books, and testimonials"""
     try:
         # Get stats - handle None values
         total_books = db.query(func.count(Book.id)).scalar() or 0

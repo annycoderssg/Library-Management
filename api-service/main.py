@@ -20,18 +20,13 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS middleware configuration from environment variables
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:9001,http://localhost:5173,http://127.0.0.1:9001")
-# Split comma-separated origins into a list
-origins_list = [origin.strip() for origin in ALLOWED_ORIGINS.split(",")] if ALLOWED_ORIGINS else ["*"]
-
+# CORS middleware configuration - allow all origins for development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins_list,
-    allow_credentials=True,  # Can be True when using specific origins
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allow_origins=["*"],
+    allow_credentials=False,  # Must be False when allow_origins is ["*"]
+    allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"],
 )
 
 # Include all routers

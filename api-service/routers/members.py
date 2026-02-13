@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Path
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import func, or_
+from sqlalchemy import func
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel
 import os
@@ -26,31 +26,12 @@ class PaginatedMembersResponse(BaseModel):
 
 
 @router.get("", response_model=PaginatedMembersResponse)
-def get_members(
-    skip: int = 0,
-    limit: int = None,
-    search: Optional[str] = None,
-    db: Session = Depends(get_read_db)
-):
-    """Get all members with pagination and optional search"""
+def get_members(skip: int = 0, limit: int = None, db: Session = Depends(get_read_db)):
+    """Get all members with pagination"""
     if limit is None:
         limit = DEFAULT_MEMBERS_PER_PAGE
-    
-    query = db.query(Member)
-    
-    # Apply search filter
-    if search:
-        search_pattern = f"%{search}%"
-        query = query.filter(
-            or_(
-                Member.name.ilike(search_pattern),
-                Member.email.ilike(search_pattern),
-                Member.phone.ilike(search_pattern)
-            )
-        )
-    
-    total = query.count()
-    members = query.order_by(Member.id.desc()).offset(skip).limit(limit).all()
+    total = db.query(func.count(Member.id)).scalar()
+    members = db.query(Member).offset(skip).limit(limit).all()
     
     # Add user role information to each member
     result = []

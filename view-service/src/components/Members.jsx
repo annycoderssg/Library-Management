@@ -20,8 +20,6 @@ function Members() {
     const [editingMember, setEditingMember] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchInput, setSearchInput] = useState('');
     const itemsPerPage = parseInt(import.meta.env.VITE_ITEMS_PER_PAGE);
     const [formData, setFormData] = useState({
         name: '',
@@ -48,7 +46,7 @@ function Members() {
         loadingRef.current = true;
         try {
             const skip = (currentPage - 1) * itemsPerPage;
-            const response = await membersAPI.getAll(skip, itemsPerPage, searchTerm);
+            const response = await membersAPI.getAll(skip, itemsPerPage);
             if (mountedRef.current) {
                 let allMembers = [];
                 let total = 0;
@@ -104,19 +102,7 @@ function Members() {
         } finally {
             loadingRef.current = false;
         }
-    }, [currentPage, itemsPerPage, searchTerm]);
-
-    const handleSearch = (e) => {
-        e.preventDefault();
-        setSearchTerm(searchInput);
-        setCurrentPage(1);
-    };
-
-    const handleClearSearch = () => {
-        setSearchInput('');
-        setSearchTerm('');
-        setCurrentPage(1);
-    };
+    }, [currentPage, itemsPerPage]);
 
     useEffect(() => {
         // Load data when component mounts
@@ -261,28 +247,6 @@ function Members() {
             />
 
             <ErrorMessage message={error} onClose={() => setError(null)} />
-
-            {/* Search Box */}
-            <div className="search-box">
-                <form onSubmit={handleSearch} className="search-form">
-                    <input
-                        type="text"
-                        placeholder="Search by name, email, or phone..."
-                        value={searchInput}
-                        onChange={(e) => setSearchInput(e.target.value)}
-                        className="search-input"
-                    />
-                    <button type="submit" className="btn-search">🔍 Search</button>
-                    {searchTerm && (
-                        <button type="button" className="btn-clear" onClick={handleClearSearch}>✕ Clear</button>
-                    )}
-                </form>
-                {searchTerm && (
-                    <p className="search-results-info">
-                        Showing results for: <strong>"{searchTerm}"</strong> ({totalItems} found)
-                    </p>
-                )}
-            </div>
 
             <Modal
                 isOpen={showForm}

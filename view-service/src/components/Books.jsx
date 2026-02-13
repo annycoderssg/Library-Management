@@ -32,8 +32,6 @@ function Books() {
     const [editingBook, setEditingBook] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchInput, setSearchInput] = useState('');
     const itemsPerPage = parseInt(import.meta.env.VITE_ITEMS_PER_PAGE);
     const [formData, setFormData] = useState({
         title: '',
@@ -72,7 +70,7 @@ function Books() {
         loadingRef.current = true;
         try {
             const skip = (currentPage - 1) * itemsPerPage;
-            const response = await booksAPI.getAll(skip, itemsPerPage, searchTerm);
+            const response = await booksAPI.getAll(skip, itemsPerPage);
             if (mountedRef.current) {
                 if (response.data && response.data.items) {
                     // New paginated response format
@@ -95,19 +93,7 @@ function Books() {
         } finally {
             loadingRef.current = false;
         }
-    }, [currentPage, itemsPerPage, searchTerm]);
-
-    const handleSearch = (e) => {
-        e.preventDefault();
-        setSearchTerm(searchInput);
-        setCurrentPage(1); // Reset to first page on search
-    };
-
-    const handleClearSearch = () => {
-        setSearchInput('');
-        setSearchTerm('');
-        setCurrentPage(1);
-    };
+    }, [currentPage, itemsPerPage]);
 
     const loadUserBorrowings = useCallback(async () => {
         // Check if user is member before making API call
@@ -352,28 +338,6 @@ function Books() {
                     <button className="success-close-btn" onClick={() => setSuccess(null)}>×</button>
                 </div>
             )}
-
-            {/* Search Box */}
-            <div className="search-box">
-                <form onSubmit={handleSearch} className="search-form">
-                    <input
-                        type="text"
-                        placeholder="Search by title, author, or ISBN..."
-                        value={searchInput}
-                        onChange={(e) => setSearchInput(e.target.value)}
-                        className="search-input"
-                    />
-                    <button type="submit" className="btn-search">🔍 Search</button>
-                    {searchTerm && (
-                        <button type="button" className="btn-clear" onClick={handleClearSearch}>✕ Clear</button>
-                    )}
-                </form>
-                {searchTerm && (
-                    <p className="search-results-info">
-                        Showing results for: <strong>"{searchTerm}"</strong> ({totalItems} found)
-                    </p>
-                )}
-            </div>
 
             {/* Show pending due books for members - Only show books due within 7 days or overdue */}
             {!isAdmin && (() => {

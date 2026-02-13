@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { borrowingsAPI, booksAPI, membersAPI } from '../api';
 import '../styles/Borrowings.css';
-import Pagination from './Pagination';
 import {
     ErrorMessage,
     Modal,
@@ -21,11 +20,6 @@ function Borrowings() {
     const [error, setError] = useState(null);
     const [showForm, setShowForm] = useState(false);
     const [statusFilter, setStatusFilter] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalItems, setTotalItems] = useState(0);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchInput, setSearchInput] = useState('');
-    const itemsPerPage = parseInt(import.meta.env.VITE_ITEMS_PER_PAGE) || 10;
     const [formData, setFormData] = useState({
         book_id: '',
         member_id: '',
@@ -34,7 +28,6 @@ function Borrowings() {
     const loadingRef = useRef(false);
     const mountedRef = useRef(true);
     const statusFilterRef = useRef('');
-    const currentPageRef = useRef(1);
 
     useEffect(() => {
         mountedRef.current = true;
@@ -44,59 +37,32 @@ function Borrowings() {
     }, []);
 
     const loadData = useCallback(async () => {
-        // Only prevent duplicate if same filter, page, search and already loading
-        if (loadingRef.current && statusFilterRef.current === statusFilter && currentPageRef.current === currentPage) return;
+        // Only prevent duplicate if same filter and already loading
+        if (loadingRef.current && statusFilterRef.current === statusFilter) return;
 
         loadingRef.current = true;
         statusFilterRef.current = statusFilter;
-        currentPageRef.current = currentPage;
 
         try {
-            const skip = (currentPage - 1) * itemsPerPage;
-            const params = {
-                skip,
-                limit: itemsPerPage,
-                ...(statusFilter && { status_filter: statusFilter }),
-                ...(searchTerm && { search: searchTerm })
-            };
-
             const [borrowingsRes, booksRes, membersRes] = await Promise.all([
-                borrowingsAPI.getAll(params),
+                borrowingsAPI.getAll(statusFilter ? { status_filter: statusFilter } : {}),
                 booksAPI.getAll(),
                 membersAPI.getAll(),
             ]);
             if (mountedRef.current) {
-                // Handle both array and paginated responses
-                let borrowingsData = [];
-                let total = 0;
-                
-                if (borrowingsRes.data && borrowingsRes.data.items) {
-                    borrowingsData = borrowingsRes.data.items;
-                    total = borrowingsRes.data.total || 0;
-                } else {
-                    borrowingsData = Array.isArray(borrowingsRes.data) ? borrowingsRes.data : [];
-                    total = borrowingsData.length;
-                }
-                
-                const booksData = Array.isArray(booksRes.data) ? booksRes.data : booksRes.data?.items || [];
-                const membersData = Array.isArray(membersRes.data) ? membersRes.data : membersRes.data?.items || [];
-                
-                setBorrowings(borrowingsData);
-                setTotalItems(total);
-                setBooks(booksData);
-                setMembers(membersData);
+                setBorrowings(borrowingsRes.data);
+                setBooks(booksRes.data);
+                setMembers(membersRes.data);
                 setError(null);
             }
         } catch (err) {
             if (mountedRef.current) {
                 setError(err.response?.data?.detail || 'Failed to load data');
-                setBorrowings([]);
-                setTotalItems(0);
             }
         } finally {
             loadingRef.current = false;
         }
-    }, [statusFilter, currentPage, itemsPerPage, searchTerm]);
+    }, [statusFilter]);
 
     useEffect(() => {
         // Load data when component mounts
@@ -104,26 +70,11 @@ function Borrowings() {
     }, [loadData]);
 
     useEffect(() => {
-        // Reset to page 1 when status filter changes
-        setCurrentPage(1);
-    }, [statusFilter]);
-
-    const handlePageChange = (page) => {
-        setCurrentPage(page);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    const handleSearch = (e) => {
-        e.preventDefault();
-        setSearchTerm(searchInput);
-        setCurrentPage(1);
-    };
-
-    const handleClearSearch = () => {
-        setSearchInput('');
-        setSearchTerm('');
-        setCurrentPage(1);
-    };
+        // Reload data when status filter changes
+        if (!loadingRef.current) {
+            loadData();
+        }
+    }, [statusFilter, loadData]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -238,28 +189,6 @@ function Borrowings() {
 
             <ErrorMessage message={error} onClose={() => setError(null)} />
 
-            {/* Search Box */}
-            <div className="search-box">
-                <form onSubmit={handleSearch} className="search-form">
-                    <input
-                        type="text"
-                        placeholder="Search by book title or member name..."
-                        value={searchInput}
-                        onChange={(e) => setSearchInput(e.target.value)}
-                        className="search-input"
-                    />
-                    <button type="submit" className="btn-search">🔍 Search</button>
-                    {searchTerm && (
-                        <button type="button" className="btn-clear" onClick={handleClearSearch}>✕ Clear</button>
-                    )}
-                </form>
-                {searchTerm && (
-                    <p className="search-results-info">
-                        Showing results for: <strong>"{searchTerm}"</strong> ({totalItems} found)
-                    </p>
-                )}
-            </div>
-
             <Modal
                 isOpen={showForm}
                 onClose={handleCloseForm}
@@ -369,17 +298,6 @@ function Borrowings() {
                     </tbody>
                 </table>
             </div>
-
-            {/* Pagination */}
-            {totalItems > 0 && (
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={Math.ceil(totalItems / itemsPerPage)}
-                    onPageChange={handlePageChange}
-                    itemsPerPage={itemsPerPage}
-                    totalItems={totalItems}
-                />
-            )}
         </div>
     );
 }

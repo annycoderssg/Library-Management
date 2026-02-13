@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Environment variables (Vite requires VITE_ prefix)
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:9002/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8891/api';
 const PROFILE_CACHE_DURATION = parseInt(import.meta.env.VITE_PROFILE_CACHE_DURATION || '5000', 10); // 5 seconds cache
 const ITEMS_PER_PAGE = parseInt(import.meta.env.VITE_ITEMS_PER_PAGE);
 
@@ -26,11 +26,7 @@ const api = axios.create({
 
 // Books API
 export const booksAPI = {
-    getAll: (skip = 0, limit = ITEMS_PER_PAGE, search = '') => {
-        const params = { skip, limit };
-        if (search) params.search = search;
-        return api.get('/books', { params });
-    },
+    getAll: (skip = 0, limit = ITEMS_PER_PAGE) => api.get('/books', { params: { skip, limit } }),
     getById: (id) => api.get(`/books/${id}`),
     create: (data) => api.post('/books', data),
     update: (id, data) => api.put(`/books/${id}`, data),
@@ -39,11 +35,7 @@ export const booksAPI = {
 
 // Members API
 export const membersAPI = {
-    getAll: (skip = 0, limit = ITEMS_PER_PAGE, search = '') => {
-        const params = { skip, limit };
-        if (search) params.search = search;
-        return api.get('/members', { params });
-    },
+    getAll: (skip = 0, limit = ITEMS_PER_PAGE) => api.get('/members', { params: { skip, limit } }),
     getById: (id) => api.get(`/members/${id}`),
     create: (data) => api.post('/members', data),
     update: (id, data) => api.put(`/members/${id}`, data),
@@ -124,6 +116,21 @@ export const authAPI = {
 export const dashboardAPI = {
     getDashboard: () => api.get('/dashboard'),
     getUserDashboard: () => api.get('/user/dashboard'),
+};
+
+// Testimonials API
+export const testimonialsAPI = {
+    getAll: (params = {}) => api.get('/testimonials', { params }),
+    getById: (id) => api.get(`/testimonials/${id}`),
+    create: (data) => api.post('/testimonials', data),
+    update: (id, data) => api.put(`/testimonials/${id}`, data),
+    delete: (id) => api.delete(`/testimonials/${id}`),
+};
+
+// Subscriptions API
+export const subscriptionsAPI = {
+    create: (data) => api.post('/subscriptions', data),
+    getAll: () => api.get('/subscriptions'),
 };
 
 // Add token to requests if available

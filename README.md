@@ -1,351 +1,337 @@
-# Library Management Service
+# Neighborhood Library Service
 
-A small neighborhood library application to manage its members, books, and lending operations.
+A full-stack web application for managing a neighborhood library's books, members, and lending operations.
+
+## Overview
+
+This application provides a complete solution for library management with:
+- **Books Management**: Create, update, delete, and view books with availability tracking
+- **Members Management**: Manage library members with contact information
+- **Borrowing Operations**: Track book borrowings and returns with due dates
+- **Overdue Tracking**: Automatic detection and fine calculation for overdue books
+- **Statistics Dashboard**: View library statistics at a glance
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| **Backend** | Python 3.12+ with FastAPI |
-| **Database** | PostgreSQL 12+ |
-| **ORM** | SQLAlchemy |
-| **Frontend** | React 19 with Vite |
-| **Authentication** | JWT (JSON Web Tokens) |
-| **API** | RESTful API |
+### Backend
+- **Python 3.12+** with FastAPI
+- **MySQL** database
+- **SQLAlchemy** ORM
+- **Pydantic** for data validation
 
-## Features
-
-### Core Functionality
-- ✅ **Books Management**: Create, update, delete, and view books with availability tracking
-- ✅ **Members Management**: Manage library members with contact information and user accounts
-- ✅ **Borrowing Operations**: Track book borrowings and returns with due dates
-- ✅ **Overdue Tracking**: Automatic detection of overdue books
-- ✅ **Fine Calculation**: Automatic fine calculation for overdue books ($1/day)
-- ✅ **Email Reminders**: Scheduled email notifications for due/overdue books
-
-### Additional Features
-- ✅ **Dashboard**: Real-time library statistics (total books, members, borrowings, overdue)
-- ✅ **Authentication**: JWT-based user authentication
-- ✅ **Authorization**: Role-based access control (Admin/Member)
-- ✅ **Pagination**: Configurable pagination for all list views
-- ✅ **Search**: Search functionality for books, members, and borrowings
-- ✅ **Status Filtering**: Filter borrowings by status (borrowed/returned/overdue)
-- ✅ **Responsive UI**: Mobile-friendly design
+### Frontend
+- **React 19** with Vite
+- **Axios** for API calls
+- **Modern CSS** for styling
 
 ## Project Structure
 
 ```
-Library-Management/
-├── api-service/                 # Backend (FastAPI)
-│   ├── main.py                  # FastAPI application entry point
-│   ├── database.py              # Database configuration (read/write replicas)
-│   ├── auth.py                  # JWT authentication logic
-│   ├── schemas.py               # Pydantic request/response schemas
-│   ├── models/                  # SQLAlchemy ORM models
-│   │   ├── __init__.py
-│   │   ├── book.py
-│   │   ├── member.py
-│   │   ├── borrowing.py
-│   │   └── user.py
-│   ├── routers/                 # API route handlers
-│   │   ├── auth.py              # Authentication endpoints
-│   │   ├── books.py             # Books CRUD with search
-│   │   ├── members.py           # Members CRUD with search
-│   │   ├── borrowings.py        # Borrowings with filters & search
-│   │   ├── dashboard.py         # Dashboard statistics
-│   │   └── statistics.py        # Library statistics
-│   ├── email_reminder.py        # Email reminder cron script
-│   ├── create_admin.py          # Admin user creation script
-│   ├── create_tables.py         # Database table creation
-│   ├── schema.sql               # PostgreSQL schema
-│   ├── requirements.txt         # Python dependencies
-│   ├── .env.example             # Environment template
-│   └── venv/                    # Python virtual environment
-├── view-service/                # Frontend (React + Vite)
+ProjectAssignment/
+├── api-service/
+│   ├── venv/                  # Python virtual environment
+│   ├── main.py               # FastAPI application
+│   ├── models.py             # SQLAlchemy database models
+│   ├── schemas.py            # Pydantic schemas for validation
+│   ├── database.py           # Database configuration
+│   ├── create_tables.py      # Script to create database tables
+│   ├── schema.sql            # MySQL schema SQL
+│   ├── requirements.txt       # Python dependencies
+│   └── .env.example          # Environment variables template
+├── view-service/
 │   ├── src/
-│   │   ├── components/          # React components
-│   │   │   ├── Dashboard.jsx    # Admin dashboard
-│   │   │   ├── Books.jsx        # Books management with search
-│   │   │   ├── Members.jsx      # Members management with search
-│   │   │   ├── Borrowings.jsx   # Borrowings with filters & search
-│   │   │   ├── Home.jsx         # Public landing page
-│   │   │   ├── Login.jsx        # Login page
-│   │   │   ├── Signup.jsx       # Registration page
-│   │   │   ├── UserDashboard.jsx # Member dashboard
-│   │   │   ├── MyProfile.jsx    # Profile management
-│   │   │   ├── Pagination.jsx   # Reusable pagination
-│   │   │   └── common/          # Shared UI components
-│   │   ├── styles/              # CSS stylesheets
-│   │   ├── api.js               # Axios API client
-│   │   ├── App.jsx              # Main router
-│   │   └── main.jsx             # React entry point
-│   ├── package.json             # Node.js dependencies
-│   ├── vite.config.js           # Vite configuration
-│   └── .env.example             # Environment template
-└── README.md                    # This file
+│   │   ├── components/       # React components
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── Books.jsx
+│   │   │   ├── Members.jsx
+│   │   │   └── Borrowings.jsx
+│   │   ├── api.js            # API client functions
+│   │   ├── App.jsx           # Main React component
+│   │   └── main.jsx          # React entry point
+│   ├── package.json          # Node.js dependencies
+│   └── vite.config.js        # Vite configuration
+└── README.md                 # This file
 ```
 
 ## Prerequisites
 
 - **Python 3.12+**
-- **PostgreSQL 12+**
-- **Node.js 18+**
-- **npm**
+- **PostgreSQL** (12+)
+- **Node.js** (18+)
+- **npm** or **yarn**
 
-## Quick Start
+## Database Setup
 
-### 1. Clone Repository
-
-```bash
-git clone https://github.com/annycoderssg/Library-Management.git
-cd Library-Management
-```
-
-### 2. Database Setup
+### 1. Create PostgreSQL Database
 
 ```bash
 # Connect to PostgreSQL
-psql -U postgres
+psql -U project -d postgres
 
-# Create database and user
-CREATE USER project WITH PASSWORD 'Password@123';
-CREATE DATABASE project_assignment OWNER project;
-GRANT ALL PRIVILEGES ON DATABASE project_assignment TO project;
+# Create database
+CREATE DATABASE project_assignment;
+
+# Exit PostgreSQL
 \q
-
-# Import schema (optional - tables are auto-created on startup)
-psql -U project -d project_assignment -f api-service/schema.sql
 ```
 
-### 3. Backend Setup
+### 2. Configure Database Connection
+
+Create a `.env` file in the `api-service` directory:
 
 ```bash
 cd api-service
-
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate  # Linux/Mac
-# venv\Scripts\activate   # Windows
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure environment
-cp .env.example .env
-# Edit .env with your database credentials and JWT secret
-
-# Generate JWT secret key
-python -c "import secrets; print(secrets.token_urlsafe(32))"
-
-# Run the server
-./venv/bin/uvicorn main:app --reload --host 0.0.0.0 --port 8891
 ```
 
-**API Documentation**: http://localhost:8891/docs (Swagger UI)
+Create `.env` file with your PostgreSQL credentials:
 
-### 4. Frontend Setup
-
-```bash
-cd view-service
-
-# Install dependencies
-npm install
-
-# Configure environment
-cp .env.example .env
-# Edit .env if needed
-
-# Run development server
-npm run dev -- --port 8890
+```env
+DATABASE_USER=project
+DATABASE_PASSWORD=Password@123
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_NAME=project_assignment
 ```
 
-**Frontend**: http://localhost:8890
+### 3. Create Database Tables
 
-### 5. Create Admin User
+You have two options:
 
+**Option A: Using SQLAlchemy (Recommended)**
 ```bash
 cd api-service
 source venv/bin/activate
-python create_admin.py
+python create_tables.py
+```
+
+**Option B: Using SQL Script**
+```bash
+psql -U project -d project_assignment -f api-service/schema.sql
+```
+
+## Backend Setup (API Service)
+
+### 1. Activate Virtual Environment
+
+```bash
+cd api-service
+source venv/bin/activate  # On Linux/Mac
+# or
+venv\Scripts\activate    # On Windows
+```
+
+### 2. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Run the Server
+
+```bash
+uvicorn main:app --reload --host 0.0.0.0 --port 9002
+```
+
+The API will be available at:
+- **API**: http://localhost:9002
+- **API Documentation**: http://localhost:9002/docs (Swagger UI)
+- **Alternative Docs**: http://localhost:9002/redoc
+
+## Frontend Setup (View Service)
+
+### 1. Install Dependencies
+
+```bash
+cd view-service
+npm install
+```
+
+### 2. Run Development Server
+
+```bash
+npm run dev
+```
+
+The React app will be available at `http://localhost:9001`
+
+### 3. Build for Production
+
+```bash
+npm run build
+npm run preview  # Preview production build
 ```
 
 ## API Endpoints
 
-### Authentication
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| POST | `/api/auth/signup` | Register new member | No |
-| POST | `/api/auth/login` | Login and get JWT | No |
-| GET | `/api/auth/me` | Get current user info | Yes |
-| GET | `/api/profile` | Get user profile with member info | Yes |
-| PUT | `/api/profile` | Update profile | Yes |
-
 ### Books
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/books?skip=0&limit=10&search=python` | Get books (paginated, searchable) | No |
-| GET | `/api/books/{id}` | Get book by ID | No |
-| POST | `/api/books` | Create book | Admin |
-| PUT | `/api/books/{id}` | Update book | Admin |
-| DELETE | `/api/books/{id}` | Delete book | Admin |
+- `GET /api/books` - Get all books
+- `GET /api/books/{id}` - Get book by ID
+- `POST /api/books` - Create new book
+- `PUT /api/books/{id}` - Update book
+- `DELETE /api/books/{id}` - Delete book
 
 ### Members
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/members?skip=0&limit=10&search=john` | Get members (paginated, searchable) | Admin |
-| GET | `/api/members/{id}` | Get member by ID | Admin |
-| POST | `/api/members` | Create member (with optional user account) | Admin |
-| PUT | `/api/members/{id}` | Update member | Admin |
-| DELETE | `/api/members/{id}` | Delete member | Admin |
-| GET | `/api/members/{id}/borrowings` | Get member's borrowings | Admin |
-| GET | `/api/members/{id}/user` | Get member's user account info | Admin |
+- `GET /api/members` - Get all members
+- `GET /api/members/{id}` - Get member by ID
+- `POST /api/members` - Create new member
+- `PUT /api/members/{id}` - Update member
+- `DELETE /api/members/{id}` - Delete member
+- `GET /api/members/{id}/borrowings` - Get member's borrowings
 
 ### Borrowings
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/borrowings?skip=0&limit=10&status_filter=borrowed&search=gatsby` | Get borrowings (paginated, filterable, searchable) | Yes |
-| GET | `/api/borrowings/{id}` | Get borrowing by ID | Yes |
-| POST | `/api/borrowings` | Create borrowing | Yes |
-| PUT | `/api/borrowings/{id}/return` | Return a book | Yes |
-| DELETE | `/api/borrowings/{id}` | Delete borrowing | Admin |
+- `GET /api/borrowings` - Get all borrowings (with optional filters)
+- `GET /api/borrowings/{id}` - Get borrowing by ID
+- `POST /api/borrowings` - Create new borrowing
+- `PUT /api/borrowings/{id}/return` - Return a book
+- `PUT /api/borrowings/{id}` - Update borrowing
+- `DELETE /api/borrowings/{id}` - Delete borrowing
 
-### Dashboard & Statistics
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/dashboard` | Get dashboard stats & new books | No |
-| GET | `/api/user/dashboard` | Get user's active borrowings | Yes |
-| GET | `/api/stats` | Get library statistics | No |
-
-## Search Functionality
-
-All list endpoints support search:
-
-| Endpoint | Search Fields |
-|----------|---------------|
-| `/api/books?search=` | title, author, ISBN |
-| `/api/members?search=` | name, email, phone |
-| `/api/borrowings?search=` | book title, member name |
-
-**Example:**
-```bash
-curl 'http://localhost:8891/api/books?search=python&skip=0&limit=10'
-```
+### Statistics
+- `GET /api/stats` - Get library statistics
 
 ## Database Schema
 
-### Tables
+### Books Table
+- `id` (Primary Key)
+- `title` (Required)
+- `author` (Required)
+- `isbn` (Unique, Optional)
+- `published_year` (Optional)
+- `total_copies` (Default: 1)
+- `available_copies` (Default: 1)
+- `created_at`, `updated_at` (Timestamps)
 
-| Table | Description |
-|-------|-------------|
-| `books` | Library book inventory |
-| `members` | Library members |
-| `users` | User accounts for authentication |
-| `borrowings` | Book borrowing records |
+### Members Table
+- `id` (Primary Key)
+- `name` (Required)
+- `email` (Unique, Required)
+- `phone` (Optional)
+- `address` (Optional)
+- `membership_date` (Default: Current Date)
+- `created_at`, `updated_at` (Timestamps)
 
-## Email Reminders
+### Borrowings Table
+- `id` (Primary Key)
+- `book_id` (Foreign Key → books)
+- `member_id` (Foreign Key → members)
+- `borrow_date` (Default: Current Date)
+- `due_date` (Required)
+- `return_date` (Optional)
+- `status` (borrowed/returned/overdue)
+- `fine_amount` (Default: 0.00)
+- `created_at`, `updated_at` (Timestamps)
 
-The `email_reminder.py` script sends notifications for:
-- Books due within N days (configurable)
-- Overdue books
+## Features
 
-### Test Email Reminders
+### Core Functionality
+✅ Create/Update/Delete books and members
+✅ Record book borrowings with due dates
+✅ Record book returns
+✅ Query borrowings by member, book, or status
+✅ Automatic overdue detection
+✅ Fine calculation ($1 per day overdue)
+✅ Availability tracking (prevents borrowing unavailable books)
+
+### Additional Features
+✅ Statistics dashboard
+✅ Real-time availability updates
+✅ Input validation
+✅ Error handling
+✅ Responsive UI
+
+## Usage Examples
+
+### Creating a Book
 ```bash
-cd api-service
-./venv/bin/python email_reminder.py
+curl -X POST "http://localhost:9002/api/books" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "isbn": "978-0-7432-7356-5",
+    "published_year": 1925,
+    "total_copies": 3,
+    "available_copies": 3
+  }'
 ```
 
-### Setup Cron Job (Production)
+### Creating a Member
 ```bash
-# Edit crontab
-crontab -e
-
-# Add line to run daily at 9 AM
-0 9 * * * cd /path/to/Library-Management/api-service && ./venv/bin/python email_reminder.py >> /var/log/library-reminders.log 2>&1
+curl -X POST "http://localhost:9002/api/members" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "123-456-7890",
+    "address": "123 Main St"
+  }'
 ```
 
-### Email Configuration
-Add to `api-service/.env`:
-```env
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your-email@gmail.com
-SMTP_PASSWORD=your-app-password    # Use Gmail App Password
-FROM_EMAIL=your-email@gmail.com
-FROM_NAME=Neighborhood Library
-REMINDER_DAYS_AHEAD=3
-FINE_PER_DAY=1.0
-```
-
-## Environment Variables
-
-### Backend (`api-service/.env`)
-
-| Variable | Description | Required | Default |
-|----------|-------------|----------|---------|
-| `DATABASE_USER` | PostgreSQL username | Yes | - |
-| `DATABASE_PASSWORD` | PostgreSQL password | Yes | - |
-| `DATABASE_HOST` | PostgreSQL host | No | localhost |
-| `DATABASE_PORT` | PostgreSQL port | No | 5432 |
-| `DATABASE_NAME` | Database name | Yes | - |
-| `JWT_SECRET_KEY` | JWT signing key (min 32 chars) | Yes | - |
-| `ALLOWED_ORIGINS` | CORS allowed origins (comma-separated) | No | localhost:8890 |
-| `DEFAULT_BOOKS_PER_PAGE` | Books pagination limit | No | 10 |
-| `DEFAULT_MEMBERS_PER_PAGE` | Members pagination limit | No | 10 |
-| `SMTP_HOST` | SMTP server host | No | smtp.gmail.com |
-| `SMTP_PORT` | SMTP server port | No | 587 |
-| `SMTP_USER` | SMTP username | No | - |
-| `SMTP_PASSWORD` | SMTP password | No | - |
-| `FROM_EMAIL` | Sender email address | No | - |
-| `FROM_NAME` | Sender name | No | Neighborhood Library |
-| `REMINDER_DAYS_AHEAD` | Days before due date to remind | No | 3 |
-| `FINE_PER_DAY` | Fine amount per overdue day | No | 1.0 |
-
-### Frontend (`view-service/.env`)
-
-| Variable | Description | Required | Default |
-|----------|-------------|----------|---------|
-| `VITE_API_BASE_URL` | Backend API URL | No | http://localhost:8891/api |
-| `VITE_ITEMS_PER_PAGE` | Pagination limit | No | 10 |
-| `VITE_PROFILE_CACHE_DURATION` | Profile cache duration (ms) | No | 5000 |
-
-## Running in Production
-
-### Backend
+### Borrowing a Book
 ```bash
-cd api-service
-./venv/bin/uvicorn main:app --host 0.0.0.0 --port 8891 --workers 4
+curl -X POST "http://localhost:9002/api/borrowings" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "book_id": 1,
+    "member_id": 1,
+    "due_date": "2024-12-31"
+  }'
 ```
 
-### Frontend
+### Returning a Book
 ```bash
-cd view-service
-npm run build
-npm run preview -- --port 8890
+curl -X PUT "http://localhost:9002/api/borrowings/1/return"
 ```
+
+## Testing the Application
+
+1. **Start the backend**:
+   ```bash
+   cd api-service
+   source venv/bin/activate
+   uvicorn main:app --reload
+   ```
+
+2. **Start the frontend** (in a new terminal):
+   ```bash
+   cd view-service
+   npm run dev
+   ```
+
+3. **Access the application**:
+   - Frontend: http://localhost:9001
+   - API Docs: http://localhost:9002/docs
 
 ## Troubleshooting
 
-### "ModuleNotFoundError: No module named 'fastapi'"
-Use the virtual environment's Python:
-```bash
-./venv/bin/uvicorn main:app --reload --port 8891
-```
+### Database Connection Issues
+- Verify MySQL is running: `sudo systemctl status mysql` (or `mysqld`)
+- Check database credentials in `.env` file
+- Ensure database `project_assignment` exists
 
-### CORS Errors
-Update `ALLOWED_ORIGINS` in `api-service/.env`:
-```env
-ALLOWED_ORIGINS=http://localhost:8890,http://127.0.0.1:8890
-```
+### Port Conflicts
+- Backend default port: 9002 (change with `--port` flag)
+- Frontend default port: 5173 (Vite will auto-select another if busy)
 
-### Database Connection Failed
-1. Verify PostgreSQL is running: `sudo systemctl status postgresql`
-2. Check credentials in `.env`
-3. Ensure database exists: `psql -U postgres -c "\l"`
+### Python Package Issues
+- Ensure virtual environment is activated
+- Reinstall packages: `pip install -r requirements.txt --force-reinstall`
+
+### React Build Issues
+- Clear node_modules: `rm -rf node_modules && npm install`
+- Check Node.js version: `node --version` (should be 18+)
+
+## Development Notes
+
+- The API automatically creates tables on first run (via `Base.metadata.create_all()`)
+- CORS is enabled for `localhost:9001`, `localhost:5173`, and `localhost:3000`
+- All timestamps are timezone-aware
+- Fine calculation: $1 per day overdue (can be customized)
 
 ## License
 
 This project is for educational purposes.
+## Author
 
----
+Neighborhood Library Service - Full Stack Implementation
 
-**Repository**: https://github.com/annycoderssg/Library-Management

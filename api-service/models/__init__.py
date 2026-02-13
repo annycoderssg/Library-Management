@@ -1,5 +1,5 @@
 """
-Models package - exports all database models
+Models package - exports all database models for backward compatibility
 """
 from .book import Book
 from .member import Member
