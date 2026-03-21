@@ -1,16 +1,24 @@
 import { Navigate } from 'react-router-dom';
 
-function ProtectedRoute({ children }) {
-    // Check if user is authenticated
+function ProtectedRoute({ children, adminOnly = false }) {
     const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
+    const userStr = localStorage.getItem('user');
 
-    // If not authenticated, redirect to login
-    if (!token || !user) {
+    if (!token || !userStr) {
         return <Navigate to="/login" replace />;
     }
 
-    // If authenticated, render the protected component
+    if (adminOnly) {
+        try {
+            const user = JSON.parse(userStr);
+            if (user.role !== 'admin') {
+                return <Navigate to="/user/dashboard" replace />;
+            }
+        } catch {
+            return <Navigate to="/login" replace />;
+        }
+    }
+
     return children;
 }
 

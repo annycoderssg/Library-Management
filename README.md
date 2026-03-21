@@ -15,7 +15,7 @@ This application provides a complete solution for library management with:
 
 ### Backend
 - **Python 3.12+** with FastAPI
-- **MySQL** database
+- **PostgreSQL** database
 - **SQLAlchemy** ORM
 - **Pydantic** for data validation
 
@@ -305,13 +305,13 @@ curl -X PUT "http://localhost:9002/api/borrowings/1/return"
 ## Troubleshooting
 
 ### Database Connection Issues
-- Verify MySQL is running: `sudo systemctl status mysql` (or `mysqld`)
+- Verify PostgreSQL is running: `sudo systemctl status postgresql`
 - Check database credentials in `.env` file
 - Ensure database `project_assignment` exists
 
 ### Port Conflicts
 - Backend default port: 9002 (change with `--port` flag)
-- Frontend default port: 5173 (Vite will auto-select another if busy)
+- Frontend default port: 9001 (change in `vite.config.js`)
 
 ### Python Package Issues
 - Ensure virtual environment is activated

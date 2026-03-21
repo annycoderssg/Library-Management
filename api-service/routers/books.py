@@ -7,16 +7,16 @@ import os
 from dotenv import load_dotenv
 
 from database import get_read_db, get_write_db
-from models import Book, User
+from models import Book, User, Borrowing
 from schemas import BookCreate, BookUpdate, BookResponse
-from auth import get_current_admin
+from auth import get_current_admin, get_current_member
 
 load_dotenv()
 
 router = APIRouter(prefix="/api/books", tags=["Books"])
 
 # Pagination constants from environment
-DEFAULT_BOOKS_PER_PAGE = int(os.getenv("DEFAULT_BOOKS_PER_PAGE"))
+DEFAULT_BOOKS_PER_PAGE = int(os.getenv("DEFAULT_BOOKS_PER_PAGE", "10"))
 
 class PaginatedBooksResponse(BaseModel):
     items: List[BookResponse]
@@ -26,7 +26,7 @@ class PaginatedBooksResponse(BaseModel):
 
 
 @router.get("", response_model=PaginatedBooksResponse)
-def get_books(skip: int = 0, limit: int = None, db: Session = Depends(get_read_db)):
+def get_books(skip: int = 0, limit: int = None, current_user: User = Depends(get_current_member), db: Session = Depends(get_read_db)):
     """Get all books with pagination"""
     if limit is None:
         limit = DEFAULT_BOOKS_PER_PAGE
@@ -41,7 +41,7 @@ def get_books(skip: int = 0, limit: int = None, db: Session = Depends(get_read_d
 
 
 @router.get("/{book_id}", response_model=BookResponse)
-def get_book(book_id: int = Path(...), db: Session = Depends(get_read_db)):
+def get_book(book_id: int = Path(...), current_user: User = Depends(get_current_member), db: Session = Depends(get_read_db)):
     """Get a specific book by ID"""
     book = db.query(Book).filter(Book.id == book_id).first()
     if not book:
@@ -82,11 +82,18 @@ def update_book(book_id: int = Path(...), book_update: BookUpdate = ..., current
     update_data = book_update.dict(exclude_unset=True)
     for field, value in update_data.items():
         setattr(db_book, field, value)
-    
-    # Ensure available_copies doesn't exceed total_copies
-    if 'total_copies' in update_data or 'available_copies' in update_data:
-        if db_book.available_copies > db_book.total_copies:
-            db_book.available_copies = db_book.total_copies
+
+    # Recalculate available_copies when total_copies changes
+    if 'total_copies' in update_data:
+        active_borrowings_count = db.query(func.count(Borrowing.id)).filter(
+            Borrowing.book_id == book_id,
+            Borrowing.return_date.is_(None)
+        ).scalar() or 0
+        db_book.available_copies = max(0, update_data['total_copies'] - active_borrowings_count)
+
+    # Ensure available_copies never exceeds total_copies
+    if db_book.available_copies > db_book.total_copies:
+        db_book.available_copies = db_book.total_copies
     
     db.commit()
     db.refresh(db_book)

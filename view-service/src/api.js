@@ -3,7 +3,7 @@ import axios from 'axios';
 // Environment variables (Vite requires VITE_ prefix)
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8891/api';
 const PROFILE_CACHE_DURATION = parseInt(import.meta.env.VITE_PROFILE_CACHE_DURATION || '5000', 10); // 5 seconds cache
-const ITEMS_PER_PAGE = parseInt(import.meta.env.VITE_ITEMS_PER_PAGE);
+const ITEMS_PER_PAGE = parseInt(import.meta.env.VITE_ITEMS_PER_PAGE || '10', 10);
 
 // Global profile fetch state to prevent duplicate calls
 let profileFetchPromise = null;

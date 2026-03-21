@@ -8,6 +8,11 @@ from database import get_read_db, get_write_db
 from models import Book, Member, Borrowing, User
 from schemas import BorrowingCreate, BorrowingUpdate, BorrowingResponse, BorrowingDetailResponse
 from auth import get_current_admin, get_current_member
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+FINE_PER_DAY = float(os.getenv("FINE_PER_DAY", "1.0"))
 
 router = APIRouter(prefix="/api/borrowings", tags=["Borrowings"])
 
@@ -18,6 +23,7 @@ def get_borrowings(
     status_filter: Optional[str] = None,
     member_id: Optional[int] = None,
     book_id: Optional[int] = None,
+    current_user: User = Depends(get_current_member),
     db: Session = Depends(get_read_db)
 ):
     """Get all borrowings with optional filters"""
@@ -40,12 +46,13 @@ def get_borrowings(
     if book_id:
         query = query.filter(Borrowing.book_id == book_id)
     
-    borrowings = query.offset(skip).limit(limit).all()
-    return borrowings
+    total = query.count()
+    borrowings = query.order_by(Borrowing.id.desc()).offset(skip).limit(limit).all()
+    return {"items": borrowings, "total": total, "skip": skip, "limit": limit}
 
 
 @router.get("/{borrowing_id}", response_model=BorrowingDetailResponse)
-def get_borrowing(borrowing_id: int = Path(...), db: Session = Depends(get_read_db)):
+def get_borrowing(borrowing_id: int = Path(...), current_user: User = Depends(get_current_member), db: Session = Depends(get_read_db)):
     """Get a specific borrowing by ID"""
     borrowing = db.query(Borrowing).options(
         joinedload(Borrowing.book),
@@ -134,8 +141,7 @@ def return_book(borrowing_id: int = Path(...), fine_amount: Optional[float] = No
     # Check if overdue and calculate fine
     if borrowing.due_date < date.today():
         days_overdue = (date.today() - borrowing.due_date).days
-        # Simple fine calculation: $1 per day overdue
-        calculated_fine = days_overdue * 1.0
+        calculated_fine = days_overdue * FINE_PER_DAY
         borrowing.fine_amount = fine_amount if fine_amount is not None else calculated_fine
         borrowing.status = "returned"  # Still returned, but fine is recorded
     

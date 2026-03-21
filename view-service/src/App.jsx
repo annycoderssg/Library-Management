@@ -23,11 +23,11 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/dashboard" element={<ProtectedRoute adminOnly><Dashboard /></ProtectedRoute>} />
             <Route path="/user/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
-            <Route path="/books" element={<ProtectedRoute><Books /></ProtectedRoute>} />
-            <Route path="/members" element={<ProtectedRoute><Members /></ProtectedRoute>} />
-            <Route path="/borrowings" element={<ProtectedRoute><Borrowings /></ProtectedRoute>} />
+            <Route path="/books" element={<ProtectedRoute adminOnly><Books /></ProtectedRoute>} />
+            <Route path="/members" element={<ProtectedRoute adminOnly><Members /></ProtectedRoute>} />
+            <Route path="/borrowings" element={<ProtectedRoute adminOnly><Borrowings /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

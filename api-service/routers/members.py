@@ -26,14 +26,21 @@ class PaginatedMembersResponse(BaseModel):
 
 
 @router.get("", response_model=PaginatedMembersResponse)
-def get_members(skip: int = 0, limit: int = None, db: Session = Depends(get_read_db)):
+def get_members(skip: int = 0, limit: int = None, current_user: User = Depends(get_current_admin), db: Session = Depends(get_read_db)):
     """Get all members with pagination"""
     if limit is None:
         limit = DEFAULT_MEMBERS_PER_PAGE
     total = db.query(func.count(Member.id)).scalar()
     members = db.query(Member).offset(skip).limit(limit).all()
-    
-    # Add user role information to each member
+
+    # Fetch user roles for all members in one query
+    member_ids = [m.id for m in members]
+    user_roles = dict(
+        db.query(User.member_id, User.role)
+        .filter(User.member_id.in_(member_ids))
+        .all()
+    ) if member_ids else {}
+
     result = []
     for member in members:
         member_dict = {
@@ -42,18 +49,12 @@ def get_members(skip: int = 0, limit: int = None, db: Session = Depends(get_read
             "email": member.email,
             "phone": member.phone,
             "address": member.address,
-            "profile_picture": getattr(member, 'profile_picture', None),  # Handle if column doesn't exist yet
+            "profile_picture": getattr(member, 'profile_picture', None),
             "membership_date": member.membership_date.isoformat() if member.membership_date else None,
             "created_at": member.created_at.isoformat() if member.created_at else None,
             "updated_at": member.updated_at.isoformat() if member.updated_at else None,
-            "user_role": None
+            "user_role": user_roles.get(member.id)
         }
-        
-        # Check if member has a user account
-        user = db.query(User).filter(User.member_id == member.id).first()
-        if user:
-            member_dict["user_role"] = user.role
-        
         result.append(member_dict)
     
     return {
@@ -65,25 +66,16 @@ def get_members(skip: int = 0, limit: int = None, db: Session = Depends(get_read
 
 
 @router.get("/{member_id}", response_model=MemberResponse)
-def get_member(member_id: int = Path(...), include_user: bool = False, db: Session = Depends(get_read_db)):
-    """Get a specific member by ID. Optionally include user account info."""
+def get_member(member_id: int = Path(...), current_user: User = Depends(get_current_admin), db: Session = Depends(get_read_db)):
+    """Get a specific member by ID."""
     member = db.query(Member).filter(Member.id == member_id).first()
     if not member:
         raise HTTPException(status_code=404, detail="Member not found")
-    
-    # If include_user is True, check if member has a user account
-    if include_user:
-        user = db.query(User).filter(User.member_id == member_id).first()
-        if user:
-            # Add user info to response (we'll need to create a new response model for this)
-            # For now, just return member
-            pass
-    
     return member
 
 
 @router.get("/{member_id}/user")
-def get_member_user(member_id: int = Path(...), db: Session = Depends(get_read_db)):
+def get_member_user(member_id: int = Path(...), current_user: User = Depends(get_current_admin), db: Session = Depends(get_read_db)):
     """Get user account info for a member (if exists)"""
     member = db.query(Member).filter(Member.id == member_id).first()
     if not member:
@@ -200,14 +192,30 @@ def delete_member(member_id: int = Path(...), current_user: User = Depends(get_c
     db_member = db.query(Member).filter(Member.id == member_id).first()
     if not db_member:
         raise HTTPException(status_code=404, detail="Member not found")
-    
+
+    # Block deletion if member has active borrowings
+    active_borrowings = db.query(Borrowing).filter(
+        Borrowing.member_id == member_id,
+        Borrowing.return_date.is_(None)
+    ).count()
+    if active_borrowings > 0:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot delete member with {active_borrowings} active borrowing(s). Please return all books first."
+        )
+
+    # Delete associated user account if exists
+    user = db.query(User).filter(User.member_id == member_id).first()
+    if user:
+        db.delete(user)
+
     db.delete(db_member)
     db.commit()
     return None
 
 
 @router.get("/{member_id}/borrowings", response_model=List[BorrowingDetailResponse])
-def get_member_borrowings(member_id: int = Path(...), status_filter: Optional[str] = None, db: Session = Depends(get_read_db)):
+def get_member_borrowings(member_id: int = Path(...), status_filter: Optional[str] = None, current_user: User = Depends(get_current_admin), db: Session = Depends(get_read_db)):
     """Get all borrowings for a specific member"""
     # Verify member exists
     member = db.query(Member).filter(Member.id == member_id).first()
